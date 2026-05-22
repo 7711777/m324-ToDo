@@ -19,22 +19,27 @@ function App() {
 
   const handleSubmit = event => {
     event.preventDefault();
+    if (!taskdescription.trim()) return;
+    const newTask = { id: Date.now(), taskdescription, dueDate: dueDate || null };
+    setTodos([...todos, newTask]);
+    setTaskdescription("");
+    setDueDate("");
     fetch("http://localhost:8080/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskdescription, dueDate: dueDate || null })
     })
-    .then(() => { fetchTasks(); setTaskdescription(""); setDueDate(""); })
+    .then(() => fetchTasks())
     .catch(err => console.log(err));
   };
 
   const handleDelete = (taskdescription) => {
+    setTodos(todos.filter(t => t.taskdescription !== taskdescription));
     fetch("http://localhost:8080/delete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskdescription })
     })
-    .then(() => fetchTasks())
     .catch(err => console.log(err));
   };
 
@@ -45,12 +50,14 @@ function App() {
 
   const handleSave = (id) => {
     if (!editText.trim()) return;
+    setTodos(todos.map(t => t.id === id ? { ...t, taskdescription: editText } : t));
+    setEditingId(null);
+    setEditText("");
     fetch(`http://localhost:8080/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskdescription: editText })
     })
-    .then(() => { fetchTasks(); setEditingId(null); setEditText(""); })
     .catch(err => console.log(err));
   };
 
@@ -64,8 +71,9 @@ function App() {
       <header className="App-header">
         <h1>ToDo Liste</h1>
         <form onSubmit={handleSubmit} className="todo-form">
-          <label>Neues Todo anlegen:</label>
+          <label htmlFor="task-input">Neue Aufgabe hinzufügen</label>
           <input
+            id="task-input"
             type="text"
             value={taskdescription}
             onChange={e => setTaskdescription(e.target.value)}
@@ -76,7 +84,7 @@ function App() {
             value={dueDate}
             onChange={e => setDueDate(e.target.value)}
           />
-          <button type="submit">Absenden</button>
+          <button type="submit">Hinzufügen</button>
         </form>
         <ul className="todo-list">
           {todos.map((todo, index) => (
@@ -93,12 +101,10 @@ function App() {
                 </>
               ) : (
                 <>
-                  <span>
-                    {"Task " + (index + 1) + ": " + todo.taskdescription}
-                    {todo.dueDate && <span className="due-date"> — {todo.dueDate}</span>}
-                  </span>
-                  <button onClick={() => handleEdit(todo)}>&#9998;</button>
-                  <button onClick={() => handleDelete(todo.taskdescription)}>&#10004;</button>
+                  <span>{todo.taskdescription}</span>
+                  {todo.dueDate && <span className="due-date"> — {todo.dueDate}</span>}
+                  <button aria-label="Bearbeiten" onClick={() => handleEdit(todo)}>&#9998;</button>
+                  <button aria-label="Löschen" onClick={() => handleDelete(todo.taskdescription)}>&#10004;</button>
                 </>
               )}
             </li>

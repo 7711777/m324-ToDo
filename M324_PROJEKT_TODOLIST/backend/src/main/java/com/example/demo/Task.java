@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 public class Task {
@@ -13,7 +14,11 @@ public class Task {
 
     private String dueDate;
 
-    public Task() {}
+    private String createdAt;
+
+    public Task() {
+        this.createdAt = LocalDate.now().toString();
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -23,4 +28,7 @@ public class Task {
 
     public String getDueDate() { return dueDate; }
     public void setDueDate(String dueDate) { this.dueDate = dueDate; }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }
