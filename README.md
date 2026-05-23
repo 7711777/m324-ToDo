@@ -17,7 +17,7 @@ Bei jedem Pull Request soll automatisch geprüft werden, ob sich sowohl das Fron
 Die Pipeline wird durch jeden **Pull Request** auf den `main`-Branch ausgelöst. Sie besteht aus zwei parallelen Jobs:
 
 1. **build-frontend** — Baut das React-Projekt mit Vite. Daraus entstehen die statischen HTML-, JS- und CSS-Dateien im `dist`-Ordner.
-2. **build-backend** — Baut das Spring Boot Projekt mit Maven. Daraus entsteht das Java-Artefakt (jar/war).
+2. **build-backend** — Baut das Spring Boot Projekt mit Maven. Daraus entsteht eine deploybare **WAR**-Datei.
 
 Beide Jobs laufen unabhängig parallel. Wenn beide grün abschliessen, ist die Pipeline erfolgreich und der PR kann gemergt werden.
 
