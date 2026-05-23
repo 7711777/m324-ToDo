@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-frontend:
+    name: Build React Frontend
+    runs-on: ubuntu-latest
+    container:
+      image: node:22
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        working-directory: M324_PROJEKT_TODOLIST/frontend
+        run: npm install
+
+      - name: Build production bundle
+        working-directory: M324_PROJEKT_TODOLIST/frontend
+        run: npm run build
+
+  build-backend:
+    name: Build Spring Boot Backend
+    runs-on: ubuntu-latest
+    container:
+      image: maven:3.9-eclipse-temurin-21
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build with Maven
+        working-directory: M324_PROJEKT_TODOLIST/backend
+        run: mvn package -B
