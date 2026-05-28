@@ -97,9 +97,11 @@ npm run build   # Vite generiert statische HTML/JS/CSS Dateien im dist/ Ordner
 ### Backend
 
 ```bash
-mvn package -B  # Kompiliert, testet und packt das Spring Boot Projekt
+mvn package -B  # Kompiliert, testet und packt das Spring Boot Projekt als WAR
                 # -B = batch mode (keine interaktiven Prompts in CI)
 ```
+
+In der `pom.xml` ist `<packaging>war</packaging>` gesetzt und `DemoApplication` erweitert `SpringBootServletInitializer`, damit die Anwendung als WAR in einem externen Servlet-Container (z.B. Tomcat) deploybar ist.
 
 Maven führt dabei automatisch die Unit-Tests aus. Wenn ein Test fehlschlägt, schlägt der Build fehl und die Pipeline wird rot.
 
