@@ -81,6 +81,7 @@ function App() {
           />
           <input
             type="date"
+            aria-label="Fälligkeitsdatum"
             value={dueDate}
             onChange={e => setDueDate(e.target.value)}
           />
