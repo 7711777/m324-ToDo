@@ -77,7 +77,7 @@ function App() {
             type="text"
             value={taskdescription}
             onChange={e => setTaskdescription(e.target.value)}
-            placeholder="Aufgabe..."
+            placeholder="Was muss erledigt werden?"
           />
           <input
             type="date"
