@@ -6,11 +6,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1")
 @SpringBootApplication
-public class DemoApplication {
+public class DemoApplication extends SpringBootServletInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(DemoApplication.class);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
@@ -20,7 +28,7 @@ public class DemoApplication {
     private TaskRepository taskRepository;
 
     @CrossOrigin
-    @GetMapping("/")
+    @GetMapping("/tasks")
     public List<Task> getTasks() {
         List<Task> tasks = taskRepository.findAll();
         tasks.sort(Comparator.comparing(
@@ -36,18 +44,17 @@ public class DemoApplication {
             return "error: empty description";
         }
         if (taskRepository.findByTaskdescription(task.getTaskdescription()).isPresent()) {
-            return "redirect:/";
+            return "ok";
         }
         taskRepository.save(task);
-        return "redirect:/";
+        return "ok";
     }
 
     @CrossOrigin
-    @PostMapping("/delete")
-    public String delTask(@RequestBody Task task) {
-        taskRepository.findByTaskdescription(task.getTaskdescription())
-            .ifPresent(t -> taskRepository.delete(t));
-        return "redirect:/";
+    @DeleteMapping("/tasks/{id}")
+    public String delTask(@PathVariable Long id) {
+        taskRepository.findById(id).ifPresent(taskRepository::delete);
+        return "ok";
     }
 
     @CrossOrigin
@@ -60,6 +67,6 @@ public class DemoApplication {
             task.setTaskdescription(updated.getTaskdescription());
             taskRepository.save(task);
         });
-        return "redirect:/";
+        return "ok";
     }
 }

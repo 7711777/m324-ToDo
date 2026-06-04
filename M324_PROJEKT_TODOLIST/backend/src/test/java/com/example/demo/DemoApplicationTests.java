@@ -31,10 +31,10 @@ class DemoApplicationTests {
         assertEquals("Einkaufen", task.getTaskdescription());
     }
 
-    // Test 3: GET "/" gibt HTTP 200 zurück (MockMvc)
+    // Test 3: GET "/api/v1/tasks" gibt HTTP 200 zurück (MockMvc)
     @Test
     void testGetEndpointReturnsOk() throws Exception {
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/api/v1/tasks"))
                .andExpect(status().isOk());
     }
 
