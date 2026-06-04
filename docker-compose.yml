@@ -1,0 +1,19 @@
+services:
+  backend:
+    image: ghcr.io/7711777/m324-todo-backend:latest
+    container_name: todo-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # H2 als In-Memory-Datenbank (kein Schreibzugriff auf Dateisystem nötig)
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:tododb
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/7711777/m324-todo-frontend:latest
+    container_name: todo-frontend
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
