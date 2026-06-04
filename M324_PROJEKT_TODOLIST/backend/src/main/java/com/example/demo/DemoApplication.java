@@ -11,6 +11,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1")
 @SpringBootApplication
 public class DemoApplication extends SpringBootServletInitializer {
 
@@ -27,7 +28,7 @@ public class DemoApplication extends SpringBootServletInitializer {
     private TaskRepository taskRepository;
 
     @CrossOrigin
-    @GetMapping("/")
+    @GetMapping("/tasks")
     public List<Task> getTasks() {
         List<Task> tasks = taskRepository.findAll();
         tasks.sort(Comparator.comparing(
@@ -43,18 +44,17 @@ public class DemoApplication extends SpringBootServletInitializer {
             return "error: empty description";
         }
         if (taskRepository.findByTaskdescription(task.getTaskdescription()).isPresent()) {
-            return "redirect:/";
+            return "ok";
         }
         taskRepository.save(task);
-        return "redirect:/";
+        return "ok";
     }
 
     @CrossOrigin
-    @PostMapping("/delete")
-    public String delTask(@RequestBody Task task) {
-        taskRepository.findByTaskdescription(task.getTaskdescription())
-            .ifPresent(t -> taskRepository.delete(t));
-        return "redirect:/";
+    @DeleteMapping("/tasks/{id}")
+    public String delTask(@PathVariable Long id) {
+        taskRepository.findById(id).ifPresent(taskRepository::delete);
+        return "ok";
     }
 
     @CrossOrigin
@@ -67,6 +67,6 @@ public class DemoApplication extends SpringBootServletInitializer {
             task.setTaskdescription(updated.getTaskdescription());
             taskRepository.save(task);
         });
-        return "redirect:/";
+        return "ok";
     }
 }
