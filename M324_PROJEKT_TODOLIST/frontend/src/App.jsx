@@ -9,7 +9,7 @@ function App() {
   const [editText, setEditText] = useState("");
 
   const fetchTasks = () => {
-    fetch("http://localhost:8080/")
+    fetch("http://localhost:8080/api/v1/tasks")
       .then(r => r.json())
       .then(data => setTodos(data))
       .catch(err => console.log(err));
@@ -24,7 +24,7 @@ function App() {
     setTodos([...todos, newTask]);
     setTaskdescription("");
     setDueDate("");
-    fetch("http://localhost:8080/tasks", {
+    fetch("http://localhost:8080/api/v1/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskdescription, dueDate: dueDate || null })
@@ -33,12 +33,10 @@ function App() {
     .catch(err => console.log(err));
   };
 
-  const handleDelete = (taskdescription) => {
+  const handleDelete = (id, taskdescription) => {
     setTodos(todos.filter(t => t.taskdescription !== taskdescription));
-    fetch("http://localhost:8080/delete", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ taskdescription })
+    fetch(`http://localhost:8080/api/v1/tasks/${id}`, {
+      method: "DELETE"
     })
     .catch(err => console.log(err));
   };
@@ -53,7 +51,7 @@ function App() {
     setTodos(todos.map(t => t.id === id ? { ...t, taskdescription: editText } : t));
     setEditingId(null);
     setEditText("");
-    fetch(`http://localhost:8080/tasks/${id}`, {
+    fetch(`http://localhost:8080/api/v1/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskdescription: editText })
@@ -105,7 +103,7 @@ function App() {
                   <span>{todo.taskdescription}</span>
                   {todo.dueDate && <span className="due-date"> — {todo.dueDate}</span>}
                   <button aria-label="Bearbeiten" onClick={() => handleEdit(todo)}>&#9998;</button>
-                  <button aria-label="Löschen" onClick={() => handleDelete(todo.taskdescription)}>&#10004;</button>
+                  <button aria-label="Löschen" onClick={() => handleDelete(todo.id, todo.taskdescription)}>&#10004;</button>
                 </>
               )}
             </li>
