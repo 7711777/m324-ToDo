@@ -86,6 +86,55 @@ jobs:
         working-directory: M324_PROJEKT_TODOLIST/backend
         run: mvn test -B
 
+  # --- Security-Scan-Stage: scannt die Docker Images auf Schwachstellen (Trivy) ---
+  scan-frontend:
+    name: Security Scan Frontend Image
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build frontend image locally
+        uses: docker/build-push-action@v6
+        with:
+          context: M324_PROJEKT_TODOLIST/frontend
+          push: false
+          load: true
+          tags: m324-todo-frontend:scan
+
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: m324-todo-frontend:scan
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: 0
+
+  scan-backend:
+    name: Security Scan Backend Image
+    needs: build-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build backend image locally
+        uses: docker/build-push-action@v6
+        with:
+          context: M324_PROJEKT_TODOLIST/backend
+          push: false
+          load: true
+          tags: m324-todo-backend:scan
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: m324-todo-backend:scan
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: 0
+
   # --- Docker Images bauen und in die GitHub Container Registry pushen ---
   # Läuft nur beim Push auf main (nach dem Merge) UND wenn die Tests grün sind.
   docker-frontend:
